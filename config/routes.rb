@@ -57,5 +57,6 @@ Rails.application.routes.draw do
   root to: "root#index"
   controller :root do
     get  :load_log
+    get  :sites
   end
 end
