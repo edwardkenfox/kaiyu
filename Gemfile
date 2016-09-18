@@ -31,6 +31,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
+gem "faker"
+gem "hirb-unicode"
+gem "pry-rails"
 gem "slim-rails"
 
 group :development, :test do
