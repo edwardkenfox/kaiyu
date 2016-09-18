@@ -21,7 +21,7 @@ class ActionLogFilter
       filtered_logs = gen_filtered_log_and_update_pathes(log, nodes, groups, user_to_node_hash)
       filtered.concat(filtered_logs)
     end
-    puts filtered
+    filtered
   end
 
   private

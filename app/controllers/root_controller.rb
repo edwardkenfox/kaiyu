@@ -4,11 +4,13 @@ class RootController < ApplicationController
   end
 
   def load_log
-    result = ActionLog.aggregates([
-      { "$match": {site_id: "25"} },
-      { "$sort": {timestamp: 1} }
+    raw_logs = ActionLog.collection.aggregate([
+      { "$match": { site_id: params[:site_id] } },
+      { "$sort": { timestamp: 1 } }
     ])
-    binding.pry
-    render json: {test: "test"}
+
+    result = ActionLogFilter.new.generate(raw_logs)
+
+    render json: result
   end
 end
