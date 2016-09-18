@@ -1,44 +1,26 @@
 class ActionLogFilter
-  def initialize
-
-  end
-
-  def generate(rawlogs=nil)
-    logs = rawlogs || gen_logs
-
+  def filter_logs(rawlogs)
     user_to_node_hash = {}
 
-    groups = logs.map do |log|
-      log[:user_status]
-    end.uniq
-
-    nodes = logs.map do |log|
-      { path: log[:url], groups: groups.map { | status | gen_empty_node(status) }}
+    groups = rawlogs.map { |e| e["user_status"] }.uniq
+    nodes  = rawlogs.map do |log|
+      { path: log["url"], groups: groups.map { |status| gen_empty_node(status) }}
     end.uniq
 
     filtered = []
-    logs.each do | log |
+
+    rawlogs.each do |log|
       filtered_logs = gen_filtered_log_and_update_pathes(log, nodes, groups, user_to_node_hash)
       filtered.concat(filtered_logs)
     end
+
     filtered
   end
 
   private
-  def gen_empty_node(status)
-    { status: status, value: 0, users: Set.new {}}
-  end
 
-  def gen_logs
-    logs = []
-    logs.push gen_log("1", Time.parse('2016-10-01 00:00:00').to_i + 10, "/",      "free")
-    logs.push gen_log("1", Time.parse('2016-10-01 00:00:00').to_i + 20, "/pageA", "free")
-    logs.push gen_log("2", Time.parse('2016-10-01 00:00:00').to_i + 30, "/pageB", "payment")
-    logs.push gen_log("3", Time.parse('2016-10-01 00:00:00').to_i + 35, "/pageC", "payment")
-    logs.push gen_log("2", Time.parse('2016-10-01 00:00:00').to_i + 40, "/pageC", "payment")
-    logs.push gen_log("2", Time.parse('2016-10-01 00:00:00').to_i + 50, "/pageC", "payment")
-    logs.push gen_log("2", Time.parse('2016-10-01 00:00:00').to_i + 60, "/",      "payment")
-    return logs
+  def gen_empty_node(status)
+    { status: status, value: 0, users: Set.new {} }
   end
 
   def gen_filtered_log_and_update_pathes(log, nodes, groups, user_to_node_hash)
@@ -66,15 +48,7 @@ class ActionLogFilter
     user_to_node_hash[log[:user_id]] = {pathIndex: pathIndex, groupIndex: groupIndex}
 
     logs.push({group: groupIndex, type: "update", path: log[:url], value: value, time: log[:timestamp]})
-    return logs
-  end
 
-  def gen_log(user_id, time, url, status)
-    {
-      "user_id": user_id,
-      "time": time,
-      "url": url,
-      "status": status
-    }
+    logs
   end
 end

@@ -9,7 +9,7 @@ class RootController < ApplicationController
       { "$sort": { timestamp: 1 } }
     ])
 
-    result = ActionLogFilter.new.generate(raw_logs)
+    result = ActionLogFilter.new.filter_logs(raw_logs)
 
     render json: result
   end
