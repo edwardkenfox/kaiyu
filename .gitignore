@@ -15,3 +15,7 @@
 /log/*
 !/log/.keep
 /tmp
+
+!/app/assets/javascripts/.keep
+/app/assets/javascripts
+node_modules
