@@ -21,12 +21,17 @@ namespace :sample_data_generator do
       log = {}
       user = users.sample
 
-      log[:site_id] = site_ids.sample
-      log[:user_id] = user.id
-      log[:user_status] = user.status
-      log[:timestamp] = rand(24).hours.ago.to_i
+      site_id = site_ids.sample
+      user_id = user.id
+      user_status = user.status
+      timestamp = rand(24).hours.ago.to_i
 
-      ActionLog.create!(log: log).tapp
+      ActionLog.create!({
+        site_id: site_ids.sample,
+        user_id: user.id,
+        user_status: user.status,
+        timestamp: rand(24).hours.ago.to_i
+      }).tapp
     end
   end
 end
