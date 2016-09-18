@@ -1,0 +1,6 @@
+h1 Kaiyu
+
+article
+  = select_tag :site_id, options_from_collection_for_select(@sites, :id, :root_url)
+  = button_tag :load
+
