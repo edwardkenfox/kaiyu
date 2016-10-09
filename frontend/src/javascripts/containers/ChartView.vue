@@ -53,12 +53,6 @@ export default {
       let pathSet = new Set()
       logs.filter((log)=>{ return log.type == "update" }).map((log)=>{ pathSet.add(log.path) })
       const pathes = Array.from(pathSet);
-      // const pathObjects = pathes.map((path) => {
-      //   return {
-      //     path: path,
-      //     label: path
-      //   }
-      // })
       const tree = parseUrls(pathes)
       this.$set('tree', tree)
       this.$set('logs', logs)

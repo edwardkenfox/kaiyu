@@ -39,129 +39,41 @@ function getSphere(parentSphere, node, level, rotation) {
   }
 }
 
-export function parseUrls(pathes) {
-  let rootNode = {
+export function parseUrls(pathSet) {
+  let node = {
     label: 'トップ',
     path: '/'
   }
-  pathes.map(path => {
-    addTree(rootNode, path)
-  })
+  for (let path of pathSet) {
+    let segments = path.split("/")
+    segments.shift()
+    if (segments[0].length < 1) continue
+    hangTo(node, segments)
+  }
+  return node
 }
 
-function addTree(node, path) {
-  /*
-  pathと比較して行って、一致しない場所が来たら子供検索。
-  子供がなければ、子供を作って新しいURLを生成。
-  ただし、次の階層まで。
-  */
+function hangTo(node, segments) {
+  if (segments.length == 0) return
+  let segment = "/" + segments.shift()
+  if (!node.children) {
+    node.children = [{
+      label: segment,
+      path: segment
+    }]
+    hangTo(node.children[0], segments)
+  } else {
+    let index = node.children.findIndex((child)=>{
+      return child.path == segment
+    })
+    if (index == -1) {
+      node.children.push({
+        label: segment,
+        path: segment
+      })
+      hangTo(node.children[node.children.length - 1], segments)
+    } else {
+      hangTo(node.children[index], segments)
+    }
+  }
 }
-
-
-// export function parseUrls (pages) {
-//   // tree to
-//   return pages.map(page => {
-//     const parent = getParent(page, pages)
-//     //console.log("[PARENT]", page.path, parent && parent.path)
-//     return Object.assign({}, {
-//       key: page.path,
-//       label: page.label,
-//       path: page.path,
-//       parentPath: parent && parent.path,
-//       childrenCount: getChildrenCount(page, pages),
-//       level: getLevel(page)
-//     })
-//   })
-// }
-
-// function getChildrenCount(page, pages) {
-//   const children = pages.filter(p => {
-//     if (p.path == page.path) {
-//       return false
-//     }
-//     if (!p.path.match(page.path)) {
-//       return false
-//     }
-//     const sub = p.path.substr(page.path.length - 1, p.path.length - 1)
-//     return sub.indexOf('/') == sub.lastIndexOf('/')
-//   })
-//   return children.length
-// }
-
-// function getParent(page, pages) {
-//   if (page.path == '/') return null
-
-//   const parents = pages.filter(p => {
-//     if (p.path == page.path) {
-//       return false
-//     }
-//     if (page.path.split('/').length == 2 && p.path == '/') {
-//       return true
-//     }
-//     if (!page.path.match(p.path)) {
-//       return false
-//     }
-//     const sub = page.path.substr(0, p.path.length)
-//     const sub2 = page.path.substr(sub.length, p.path.length - 1)
-//     if (sub2.split('/').length == 2){
-//       return true
-//     }
-//     return false
-//   })
-//   return parents[0]
-// }
-
-// function getLevel(page) {
-//   if (page.path == '/') return 0
-//   return page.path.split('/').length - 1
-// }
-/*
-      {
-        label: 'トップ',
-        path: '/',
-        children: [
-          {
-            label: 'ページA',
-            path: '/pageA',
-          },
-          {
-            label: 'ページB',
-            path: '/pageB',
-          },
-          {
-            label: 'ページC',
-            path: '/pageC',
-          },
-          {
-            label: 'ページD',
-            path: '/pageD',
-            children: [
-              {
-                label: 'ページD-1',
-                path: '/pageD-1',
-              },
-            ]
-          },
-          {
-            label: 'ページE',
-            path: '/pageE',
-            children: [
-              {
-                label: 'ページE-1',
-                path: '/pageE-1',
-              },
-              {
-                label: 'ページE-2',
-                path: '/pageE-2',
-                children: [
-                  {
-                    label: 'ページE-2-1',
-                    path: '/pageE-2-1',
-                  },
-                ]
-              },
-            ]
-          },
-        ]
-      }
-*/
