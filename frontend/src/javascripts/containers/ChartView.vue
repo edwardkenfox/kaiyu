@@ -31,6 +31,8 @@
 import ShellChart from '../components/chart/ShellChart.vue'
 import SeekBar from '../components/control/SeekBar.vue'
 import LogLoader from './LogLoader.vue'
+import { parseUrls } from '../utils/parser.js'
+
 export default {
   name: 'ChatView',
   components: {
@@ -39,12 +41,21 @@ export default {
     SeekBar
   },
   attached() {
-    this.$on('loaded-data', (data)=>{
-      this.$set('startTime', data.logs[0].time)
-      this.$set('endTime', data.logs[data.logs.length - 1].time)
-      this.$set('groups', data.groups)
-      this.$set('tree', data.tree)
-      this.$set('logs', data.logs)
+    this.$on('loaded-log-data', (logs)=>{
+      this.$set('startTime', logs[0].time)
+      this.$set('endTime', logs[logs.length - 1].time)
+
+      this.$set('groups', [
+        { color: '#ec4862' },
+        { color: '#e6e79a' },
+        { color: '#66aafe' },
+      ])
+      let pathSet = new Set()
+      logs.filter((log)=>{ return log.type == "update" }).map((log)=>{ pathSet.add(log.path) })
+      const pathes = Array.from(pathSet);
+      const tree = parseUrls(pathes)
+      this.$set('tree', tree)
+      this.$set('logs', logs)
     })
     this.$on('tick-event', timeDiff => {
       let sliceCount = 0

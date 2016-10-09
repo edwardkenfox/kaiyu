@@ -3,6 +3,10 @@ class RootController < ApplicationController
     @sites = Site.all
   end
 
+  def sites
+    render json: Site.all
+  end
+
   def load_log
     raw_logs = ActionLog.collection.aggregate([
       { "$match": { site_id: params[:site_id] } },

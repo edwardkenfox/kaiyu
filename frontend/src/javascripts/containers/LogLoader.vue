@@ -1,15 +1,13 @@
 <template>
   <div class="log-leader-view">
     <select v-model="selected">
-      <option selected>サンプルログA</option>
-      <option>サンプルログB</option>
-      <option>サンプルログC</option>
+      <option v-for="site in sites" value="{{site.id}}">{{site.root_url}}</option>
     </select>
     <div class="button" v-on:click="load" v-bind:class="{ 'disable': isLoading }">
       <a class="text" >Load</a>
     </div>
     <div class="status">
-      <span v-show="isDefault">Selected: {{ selected }}</span>
+      <span v-show="isDefault">Site ID: {{ selected }}</span>
       <span v-show="isLoading">Loading...</span>
       <span v-show="isError">Error: {{ selected }}</span>
     </div>
@@ -31,16 +29,22 @@ export default {
     return {
       selected: null,
       state: STATE_DEFAULT,
-      disabled: true
+      disabled: true,
+      sites: []
     }
+  },
+  created() {
+    fetch("http://localhost:3000/sites").then(response => { return response.json() }).then (json => {
+      this.$set('sites', json)
+    })
   },
   methods: {
     load() {
       this.state = STATE_LOADING
-      // store.fetchData(0).then(data => {
-      //   this.$dispatch('loaded-data', data)
-      //   this.state = STATE_LOADED
-      // })
+      fetch("http://localhost:3000/load_log?site_id=" + this.selected).then(response => { return response.json() }).then (json => {
+        this.$set('state', STATE_LOADED)
+        this.$dispatch('loaded-log-data', json)
+      })
     },
   },
   computed: {
